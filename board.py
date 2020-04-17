@@ -4,6 +4,7 @@ import cv2
 l_green = np.array([50, 60, 60])
 u_green = np.array([80, 255, 255])
 
+
 def find_edges_and_perspective_transform(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, l_green, u_green)
@@ -36,3 +37,15 @@ def find_edges_and_perspective_transform(image):
     else:
         return image
 
+
+def find_checkers(image):
+    median = cv2.medianBlur(image, 5)
+    gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=400, param2=30, minRadius=0, maxRadius=0)
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        for i in circles[0, :]:
+            # draw the outer circle
+            cv2.circle(image, (i[0], i[1]), i[2], (0, 255, 0), 2)
+            # draw the center of the circle
+            cv2.circle(image, (i[0], i[1]), 2, (0, 0, 255), 3)

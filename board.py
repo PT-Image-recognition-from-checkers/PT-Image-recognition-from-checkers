@@ -41,7 +41,7 @@ def find_edges_and_perspective_transform(image):
 def find_checkers(image):
     median = cv2.medianBlur(image, 5)
     gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=400, param2=30, minRadius=0, maxRadius=0)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=35, param2=25, minRadius=25, maxRadius=45)
     if circles is not None:
         circles = np.uint16(np.around(circles))
         for i in circles[0, :]:

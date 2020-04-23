@@ -96,3 +96,33 @@ def find_checkers(image):
 
             area_b = mask_b[x1:x2, y1:y2]
             height_b, width_b = area_b.shape
+
+            # Sprawdzanie kolorów pionków
+            if (cv2.countNonZero(area_w) / (height_w * width_w)) > 0.8:
+                color = 'WP'
+            elif (cv2.countNonZero(area_r) / (height_r * width_r)) > 0.8:
+                color = 'RP'
+            elif (cv2.countNonZero(area_b) / (height_b * width_b)) > 0.8:
+                color = 'RQ'
+            else:
+                color = 'WQ'
+
+
+def find_fields():
+    #Lewy górny róg pierwszego pola
+    start_x = 15.5
+    start_y = 15.5
+
+    #Kolejne pola
+    next = 73.0625
+
+    fields_pos = []
+
+    for j in range(0, 8):
+        for i in range(0, 8):
+            fields_pos.append([[start_x, start_y], [start_x + next, start_y + next]])
+            start_x += next
+        start_x = 15.5
+        start_y += next
+
+    return fields_pos

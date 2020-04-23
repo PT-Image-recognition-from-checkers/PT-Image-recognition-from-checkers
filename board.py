@@ -52,6 +52,8 @@ def find_edges_and_perspective_transform(image):
 
 
 def find_checkers(image):
+    board_fields = [None] * 64
+
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     #Maski dla kolorów
@@ -106,6 +108,20 @@ def find_checkers(image):
                 color = 'RQ'
             else:
                 color = 'WQ'
+
+
+            # Ustawienie pionków na planszy
+            fields = find_fields()
+            for field in fields:
+                if (circle[0] > field[0][0]) and (circle[0] < field[1][0]) and (circle[1] > field[0][1]) and (
+                        circle[1] < field[1][1]):
+                    position = fields.index(field)
+                    board_fields[position] = color
+                    break
+
+    return board_fields
+
+
 
 
 def find_fields():

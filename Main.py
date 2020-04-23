@@ -16,7 +16,6 @@ while True:
     imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
     img = cv2.imdecode(imgNp, 1)
     dst = board.find_edges_and_perspective_transform(img)
-    board.find_checkers(dst)
     cv2.imshow('Camera', dst)
 
     #laptop

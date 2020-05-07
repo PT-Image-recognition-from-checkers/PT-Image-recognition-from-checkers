@@ -8,13 +8,13 @@ import virtual_board
 import time
 
 #telefon
-# url = 'http://192.168.2.8:8080/shot.jpg'
+url = 'http://192.168.2.8:8080/shot.jpg'
 
 #laptop
-cap = cv2.VideoCapture(1)
+#cap = cv2.VideoCapture(1)
 
-pygame.init()  # essential for pygame
-pygame.font.init()  # for text
+pygame.init()
+pygame.font.init()
 
 screen = pygame.display.set_mode((1200, 600))
 pygame.display.set_caption('Checkers Game')
@@ -25,22 +25,29 @@ wp = pygame.image.load("assets/white_pawn.png")
 rq = pygame.image.load("assets/red_queen.png")
 wq = pygame.image.load("assets/white_queen.png")
 
-# necessary for capping the game at 60FPS
 clock = pygame.time.Clock()
 
+global checkers_list_before
+global checkers_list_after
+checkers_list_before = []
+checkers_list_after = []
+checkers_list = []
 values = None
 global img, dst
 while True:
     #telefon
-    # imgResp = urlopen(url)
-    # imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
-    # img = cv2.imdecode(imgNp, 1)
+    imgResp = urlopen(url)
+    imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
+    img = cv2.imdecode(imgNp, 1)
 
     # laptop
-    ret, img = cap.read()
+    #ret, img = cap.read()
+
     dst, crop_rect = board.find_edges_and_perspective_transform(img)
 
-    # print("PRINT", np.array(list(crop_rect)))
+    checkers_list_before = board.find_checkers(dst)
+    if 'RP' not in checkers_list_before or 'WP' not in checkers_list_before or 'RQ' not in checkers_list_before or 'WQ' not in checkers_list_before:
+        checkers_list_before = checkers_list_after
 
     if values is None:
         values = np.array(list(crop_rect), dtype='float32')
@@ -53,30 +60,33 @@ while True:
     equal_arrays1 = comparison2.all()
 
     while not equal_arrays and not equal_arrays1:
-        print("PRAWDA")
-        print(equal_arrays)
-        print(equal_arrays1)
         time.sleep(1)
         # KOMPUTER
-        ret, img = cap.read()
+        #ret, img = cap.read()
         # TELEFON
-        # imgResp = urlopen(url)
-        # imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
-        # img = cv2.imdecode(imgNp, 1)
+        imgResp = urlopen(url)
+        imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
+        img = cv2.imdecode(imgNp, 1)
         dst, crop_rect = board.find_edges_and_perspective_transform(img)
         comparison1 = crop_rect < values1
         comparison2 = crop_rect > values2
         equal_arrays = comparison1.all()
         equal_arrays1 = comparison2.all()
-        # print(checkers_list)
+        checkers_list_after = board.find_checkers(dst)
 
+    if len(checkers_list_after) != 0:
+        if checkers_list_after != checkers_list_before:
+            move = virtual_board.move(checkers_list_before, checkers_list_after)
+            if move:
+               print('PRAWIDŁOWY')
+            elif not move:
+                print('NIEPRAWIDŁOWY')
+
+        else:
+            pass
 
     cv2.imshow("dst", dst)
-    # if checkers_list is not None:
-    #     checkers_list_n = checkers_list
-    # print(checkers_list_n)
     checkers_list = board.find_checkers(dst)
-    print(checkers_list)
 
     dst_RGB = cv2.cvtColor(dst, cv2.COLOR_BGR2RGB)
     cv2.imshow("dst_RGB", dst_RGB)
@@ -110,9 +120,8 @@ while True:
             else:
                 position += 1
 
-
     pygame.display.update()
-    # clock.tick(60)
+    #clock.tick(60)
 
     if ord('q') == cv2.waitKey(10):
         exit(0)

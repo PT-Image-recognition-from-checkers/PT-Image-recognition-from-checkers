@@ -151,6 +151,46 @@ def capture(checkers_list_before, checkers_list_after):
 
         return False
 
+    elif checkers_list_before[positions[0]] == 'RQ' or checkers_list_before[positions[0]] == 'WQ' or \
+        checkers_list_before[positions[2]] == 'RQ' or checkers_list_before[positions[2]] == 'WQ':
+        print('DAMA')
+
+        if checkers_list_before[positions[2]] is None and checkers_list_before[positions[0]] is not checkers_list_before[positions[1]] and \
+            checkers_list_after[positions[2]] is checkers_list_before[positions[0]] and checkers_list_after[positions[1]] is None and \
+            checkers_list_after[positions[0]] is None:
+            print('BICIE W DÓŁ')
+            if ((positions[0] - positions[2]) % 7 == 0):
+                #print(positions[0], positions[1])
+                for i in range(positions[0] + 7, positions[2], 7):
+                    if i != positions[1]:
+                        if checkers_list_before[i] != None:
+                            return False
+            elif ((positions[0] - positions[2]) % 9 == 0):
+                for i in range(positions[0] + 9, positions[2], 9):
+                    if i != positions[1]:
+                        if checkers_list_before[i] != None:
+                           return False
+
+            return True
+
+        elif checkers_list_before[positions[0]] is None and checkers_list_before[positions[2]] is not checkers_list_before[positions[1]] and \
+            checkers_list_after[positions[0]] is checkers_list_before[positions[2]] and checkers_list_after[positions[1]] is None and \
+            checkers_list_after[positions[2]] is None:
+            print('BICIE W GÓRĘ')
+            if ((positions[2] - positions[0]) % 7 == 0):
+                #print(positions[0], positions[1])
+                for i in range(positions[0], positions[2], 7):
+                    if i != positions[1]:
+                        if checkers_list_before[i] != None:
+                            return False
+            elif ((positions[2] - positions[0]) % 9 == 0):
+                for i in range(positions[0], positions[2], 9):
+                    if i != positions[1]:
+                        if checkers_list_before[i] != None:
+                            return False
+
+            return True
+
     else:
         return False
 

@@ -127,3 +127,31 @@ def move(checkers_list_before, checkers_list_after):
 
         else:
             return
+    else:
+        return positions
+
+
+def capture(checkers_list_before, checkers_list_after):
+    positions = move(checkers_list_before, checkers_list_after)
+
+    if checkers_list_before[positions[0]] == 'RP' or checkers_list_before[positions[0]] == 'WP' or \
+        checkers_list_before[positions[2]] == 'RP' or checkers_list_before[positions[2]] == 'WP':
+        #print(checkers_list_before)
+        #print(checkers_list_after)
+
+        if checkers_list_before[positions[2]] is None and checkers_list_before[positions[0]] is not checkers_list_before[positions[1]] and \
+            checkers_list_after[positions[2]] is checkers_list_before[positions[0]] and checkers_list_after[positions[1]] is None and \
+            checkers_list_after[positions[0]] is None:
+            return True
+
+        elif checkers_list_before[positions[0]] is None and checkers_list_before[positions[2]] is not checkers_list_before[positions[1]] and \
+            checkers_list_after[positions[0]] is checkers_list_before[positions[2]] and checkers_list_after[positions[1]] is None and \
+            checkers_list_after[positions[2]] is None:
+            return True
+
+        return False
+
+    else:
+        return False
+
+    print(positions)

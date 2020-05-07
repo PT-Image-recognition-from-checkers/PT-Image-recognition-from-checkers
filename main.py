@@ -33,6 +33,8 @@ checkers_list_before = []
 checkers_list_after = []
 checkers_list = []
 values = None
+before_count = 0
+after_count = 0
 global img, dst
 while True:
     #telefon
@@ -74,16 +76,30 @@ while True:
         equal_arrays1 = comparison2.all()
         checkers_list_after = board.find_checkers(dst)
 
-    if len(checkers_list_after) != 0:
-        if checkers_list_after != checkers_list_before:
-            move = virtual_board.move(checkers_list_before, checkers_list_after)
-            if move:
-               print('PRAWIDŁOWY')
-            elif not move:
-                print('NIEPRAWIDŁOWY')
+        for i in range(len(checkers_list_before)):
+            if checkers_list_before[i] is not None:
+                before_count += 1
+            if checkers_list_after[i] is not None:
+                after_count += 1
 
-        else:
-            pass
+    if len(checkers_list_after) != 0:
+        if checkers_list_after != checkers_list_before and before_count != 0:
+            if before_count == after_count:
+                move = virtual_board.move(checkers_list_before, checkers_list_after)
+                before_count = 0
+                after_count = 0
+                if move:
+                   print('PRAWIDŁOWY RUCH')
+                elif not move:
+                    print('NIEPRAWIDŁOWY RUCH')
+            else:
+                capture = virtual_board.capture(checkers_list_before, checkers_list_after)
+                before_count = 0
+                after_count = 0
+                if capture:
+                   print('PRAWIDŁOWE BICIE')
+                elif not capture:
+                    print('NIEPRAWIDŁOWE BICIE')
 
     cv2.imshow("dst", dst)
     checkers_list = board.find_checkers(dst)

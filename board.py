@@ -128,8 +128,6 @@ def find_checkers(image):
     return board_fields
 
 
-
-
 def find_fields():
     #Lewy górny róg pierwszego pola
     start_x = 15.5

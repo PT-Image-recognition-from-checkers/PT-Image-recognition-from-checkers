@@ -11,12 +11,12 @@ import time
 url = 'http://192.168.2.8:8080/shot.jpg'
 
 #laptop
-#cap = cv2.VideoCapture(1)
+#cap = cv2.VideoCapture(0)
 
 pygame.init()
 pygame.font.init()
 
-screen = pygame.display.set_mode((1200, 600))
+screen = pygame.display.set_mode((1210, 600))
 pygame.display.set_caption('Checkers Game')
 
 bg = pygame.image.load("assets/board.png").convert()
@@ -31,18 +31,50 @@ global checkers_list_before
 global checkers_list_after
 checkers_list_before = []
 checkers_list_after = []
+global checkers_list_correct
+checkers_list_correct = []
 checkers_list = []
 values = None
+global before_count
+global after_count
 before_count = 0
 after_count = 0
 global img, dst
+
+
+def check_move():
+    global checkers_list_correct, checkers_list_after, before_count, after_count
+    while checkers_list_correct != checkers_list_after:
+        print('ŁAJL')
+        time.sleep(1)
+        # KOMPUTER
+        # ret, img = cap.read()
+        # TELEFON
+        imgResp = urlopen(url)
+        imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
+        img = cv2.imdecode(imgNp, 1)
+
+        dst, crop_rect = board.find_edges_and_perspective_transform(img)
+        comparison1 = crop_rect < values1
+        comparison2 = crop_rect > values2
+        equal_arrays = comparison1.all()
+        equal_arrays1 = comparison2.all()
+        checkers_list_after = board.find_checkers(dst)
+
+        for i in range(len(checkers_list_before)):
+            if checkers_list_before[i] is not None:
+                before_count += 1
+            if checkers_list_after[i] is not None:
+                after_count += 1
+
+
 while True:
     #telefon
     imgResp = urlopen(url)
     imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
     img = cv2.imdecode(imgNp, 1)
 
-    # laptop
+    #laptop
     #ret, img = cap.read()
 
     dst, crop_rect = board.find_edges_and_perspective_transform(img)
@@ -50,6 +82,8 @@ while True:
     checkers_list_before = board.find_checkers(dst)
     if 'RP' not in checkers_list_before or 'WP' not in checkers_list_before or 'RQ' not in checkers_list_before or 'WQ' not in checkers_list_before:
         checkers_list_before = checkers_list_after
+        if len(checkers_list_correct) == 0:
+            checkers_list_correct = checkers_list_after
 
     if values is None:
         values = np.array(list(crop_rect), dtype='float32')
@@ -63,12 +97,13 @@ while True:
 
     while not equal_arrays and not equal_arrays1:
         time.sleep(1)
-        # KOMPUTER
+        #KOMPUTER
         #ret, img = cap.read()
-        # TELEFON
+        #TELEFON
         imgResp = urlopen(url)
         imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
         img = cv2.imdecode(imgNp, 1)
+
         dst, crop_rect = board.find_edges_and_perspective_transform(img)
         comparison1 = crop_rect < values1
         comparison2 = crop_rect > values2
@@ -86,20 +121,28 @@ while True:
         if checkers_list_after != checkers_list_before and before_count != 0:
             if before_count == after_count:
                 move = virtual_board.move(checkers_list_before, checkers_list_after)
-                before_count = 0
-                after_count = 0
                 if move:
                    print('PRAWIDŁOWY RUCH')
+                   checkers_list_correct = checkers_list_after
+                   print(checkers_list_correct)
+                   virtual_board.gameover_check(checkers_list_correct)
                 elif not move:
                     print('NIEPRAWIDŁOWY RUCH')
-            else:
-                capture = virtual_board.capture(checkers_list_before, checkers_list_after)
+                    check_move()
                 before_count = 0
                 after_count = 0
+
+            else:
+                capture = virtual_board.capture(checkers_list_before, checkers_list_after)
                 if capture:
                    print('PRAWIDŁOWE BICIE')
+                   checkers_list_correct = checkers_list_after
+                   virtual_board.gameover_check(checkers_list_correct)
                 elif not capture:
                     print('NIEPRAWIDŁOWE BICIE')
+                    check_move()
+                before_count = 0
+                after_count = 0
 
     cv2.imshow("dst", dst)
     checkers_list = board.find_checkers(dst)

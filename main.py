@@ -6,9 +6,12 @@ import pygame
 import sys
 import virtual_board
 import time
+import pygame_textinput
+import re
+
 
 #telefon
-url = 'http://192.168.2.8:8080/shot.jpg'
+url = 'http://192.168.8.200:8080/shot.jpg'
 
 #laptop
 #cap = cv2.VideoCapture(0)
@@ -44,6 +47,7 @@ global img, dst
 
 def check_move():
     global checkers_list_correct, checkers_list_after, before_count, after_count
+
     while checkers_list_correct != checkers_list_after:
         print('ŁAJL')
         time.sleep(1)
@@ -61,14 +65,11 @@ def check_move():
         equal_arrays1 = comparison2.all()
         checkers_list_after = board.find_checkers(dst)
 
-        for i in range(len(checkers_list_before)):
-            if checkers_list_before[i] is not None:
-                before_count += 1
-            if checkers_list_after[i] is not None:
-                after_count += 1
+    pygame.mixer.music.stop()
 
 
 while True:
+
     #telefon
     imgResp = urlopen(url)
     imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
@@ -96,6 +97,8 @@ while True:
     equal_arrays1 = comparison2.all()
 
     while not equal_arrays and not equal_arrays1:
+        before_count = 0
+        after_count = 0
         time.sleep(1)
         #KOMPUTER
         #ret, img = cap.read()
@@ -119,8 +122,9 @@ while True:
 
     if len(checkers_list_after) != 0:
         if checkers_list_after != checkers_list_before and before_count != 0:
+            print(before_count, after_count)
             if before_count == after_count:
-                move = virtual_board.move(checkers_list_before, checkers_list_after)
+                move, _ = virtual_board.move(checkers_list_before, checkers_list_after)
                 if move:
                    print('PRAWIDŁOWY RUCH')
                    checkers_list_correct = checkers_list_after
@@ -144,19 +148,21 @@ while True:
                 before_count = 0
                 after_count = 0
 
-    cv2.imshow("dst", dst)
+    #cv2.imshow("dst", dst)
     checkers_list = board.find_checkers(dst)
 
     dst_RGB = cv2.cvtColor(dst, cv2.COLOR_BGR2RGB)
-    cv2.imshow("dst_RGB", dst_RGB)
+    #cv2.imshow("dst_RGB", dst_RGB)
     dst_RGB = np.rot90(dst_RGB)
     dst_RGB = pygame.surfarray.make_surface(dst_RGB)
     dst_RGB = pygame.transform.flip(dst_RGB, True, False)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            sys.exit()
+            pygame.quit()
+            quit()
 
+    screen.fill((77, 40, 0))
     screen.blit(bg, (0, 0))
     screen.blit(dst_RGB, (610, 0))
 

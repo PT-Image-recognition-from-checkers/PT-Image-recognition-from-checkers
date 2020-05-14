@@ -27,20 +27,20 @@ def move(checkers_list_before, checkers_list_after):
     if len(positions) == 2:
         promotion = check_promotion(positions, checkers_list_before, checkers_list_after)
         if promotion:
-            return True
+            return True, positions
         else:
             if (checkers_list_after[positions[1]] == 'RP' and checkers_list_before[positions[1]] == None):
                 print('CZERWONY')
                 if (positions[1] == positions[0] + 7 or positions[1] == positions[0] + 9):
-                    return True
+                    return True, positions
                 else:
-                    return False
+                    return False, positions
             elif (checkers_list_after[positions[0]] == 'WP' and checkers_list_before[positions[0]] == None):
                 print('BIAŁY')
                 if (positions[0] == positions[1] - 7 or positions[0] == positions[1] - 9):
-                    return True
+                    return True, positions
                 else:
-                    return False
+                    return False, positions
             elif (checkers_list_after[positions[1]] == 'RQ' and checkers_list_before[positions[1]] == None):
                 print('CZERWONA DAMA')
                 if (positions[1] == positions[0] + 7 or positions[1] == positions[0] + 9 or positions[1] == positions[0] + 14 or
@@ -52,17 +52,17 @@ def move(checkers_list_before, checkers_list_after):
                     if((positions[1] - positions[0]) % 7 == 0):
                         for i in range(positions[0] + 7, positions[1], 7):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
                     elif ((positions[1] - positions[0]) % 9 == 0):
                         for i in range(positions[0] + 9, positions[1], 9):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
-                    return True
+                    return True, positions
 
                 else:
-                    return False
+                    return False, positions
             elif (checkers_list_after[positions[0]] == 'RQ' and checkers_list_before[positions[0]] == None):
                 print('CZERWONA DAMA')
                 if (positions[0] == positions[1] - 7 or positions[0] == positions[1] - 9 or positions[0] == positions[1] - 14 or
@@ -75,16 +75,16 @@ def move(checkers_list_before, checkers_list_after):
                         print(positions[0], positions[1])
                         for i in range(positions[0], positions[1], 7):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
                     elif ((positions[0] - positions[1]) % 9 == 0):
                         for i in range(positions[0], positions[1], 9):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
-                    return True
+                    return True, positions
                 else:
-                    return False
+                    return False, positions
             elif (checkers_list_after[positions[1]] == 'WQ' and checkers_list_before[positions[1]] == None):
                 print('BIAŁA DAMA')
                 if (positions[1] == positions[0] + 7 or positions[1] == positions[0] + 9 or positions[1] == positions[0] + 14 or
@@ -96,17 +96,17 @@ def move(checkers_list_before, checkers_list_after):
                     if ((positions[1] - positions[0]) % 7 == 0):
                         for i in range(positions[0] + 7, positions[1], 7):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
                     elif ((positions[1] - positions[0]) % 9 == 0):
                         for i in range(positions[0] + 9, positions[1], 9):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
-                    return True
+                    return True, positions
 
                 else:
-                    return False
+                    return False, positions
             elif(checkers_list_after[positions[0]] == 'WQ' and checkers_list_before[positions[0]] == None):
                 print('BIAŁA DAMA')
                 if (positions[0] == positions[1] - 7 or positions[0] == positions[1] - 9 or positions[0] == positions[1] - 14 or
@@ -118,98 +118,98 @@ def move(checkers_list_before, checkers_list_after):
                         print(positions[0], positions[1])
                         for i in range(positions[0], positions[1], 7):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
                     elif ((positions[0] - positions[1]) % 9 == 0):
                         for i in range(positions[0], positions[1], 9):
                             if checkers_list_before[i] != None:
-                                return False
+                                return False, positions
 
+                    return True, positions
+                else:
+                    return False, positions
+
+            else:
+                return False, positions
+    elif len(positions) == 1:
+        return False, positions
+    else:
+        return False, positions
+
+
+def capture(checkers_list_before, checkers_list_after):
+    _, positions = move(checkers_list_before, checkers_list_after)
+    if len(positions) == 3:
+        if checkers_list_before[positions[0]] == 'RP' or checkers_list_before[positions[0]] == 'WP' or \
+            checkers_list_before[positions[2]] == 'RP' or checkers_list_before[positions[2]] == 'WP':
+            #print(checkers_list_before)
+            #print(checkers_list_after)
+
+            if checkers_list_before[positions[2]] is None and checkers_list_before[positions[0]] is not checkers_list_before[positions[1]] and \
+                checkers_list_after[positions[2]] is checkers_list_before[positions[0]] and checkers_list_after[positions[1]] is None and \
+                checkers_list_after[positions[0]] is None:
+                if((checkers_list_before[positions[0]] == 'RP' and checkers_list_before[positions[1]] != 'RQ') or
+                    (checkers_list_before[positions[0]] == 'WP' and checkers_list_before[positions[1]] != 'WQ')):
                     return True
                 else:
                     return False
 
-            else:
-                return
-    elif len(positions) == 1:
-        return False
-    else:
-        return positions
+            elif checkers_list_before[positions[0]] is None and checkers_list_before[positions[2]] is not checkers_list_before[positions[1]] and \
+                checkers_list_after[positions[0]] is checkers_list_before[positions[2]] and checkers_list_after[positions[1]] is None and \
+                checkers_list_after[positions[2]] is None:
+                if ((checkers_list_before[positions[2]] == 'RP' and checkers_list_before[positions[1]] != 'RQ') or
+                        (checkers_list_before[positions[2]] == 'WP' and checkers_list_before[positions[1]] != 'WQ')):
+                    return True
+                else:
+                    return False
 
+            return False
 
-def capture(checkers_list_before, checkers_list_after):
-    positions = move(checkers_list_before, checkers_list_after)
+        elif checkers_list_before[positions[0]] == 'RQ' or checkers_list_before[positions[0]] == 'WQ' or \
+            checkers_list_before[positions[2]] == 'RQ' or checkers_list_before[positions[2]] == 'WQ':
+            print('DAMA')
 
-    if checkers_list_before[positions[0]] == 'RP' or checkers_list_before[positions[0]] == 'WP' or \
-        checkers_list_before[positions[2]] == 'RP' or checkers_list_before[positions[2]] == 'WP':
-        #print(checkers_list_before)
-        #print(checkers_list_after)
+            if checkers_list_before[positions[2]] is None and checkers_list_before[positions[0]] is not checkers_list_before[positions[1]] and \
+                checkers_list_after[positions[2]] is checkers_list_before[positions[0]] and checkers_list_after[positions[1]] is None and \
+                checkers_list_after[positions[0]] is None:
+                print('BICIE W DÓŁ')
+                if ((positions[0] - positions[2]) % 7 == 0):
+                    #print(positions[0], positions[1])
+                    for i in range(positions[0] + 7, positions[2], 7):
+                        if i != positions[1]:
+                            if checkers_list_before[i] != None:
+                                return False
+                elif ((positions[0] - positions[2]) % 9 == 0):
+                    for i in range(positions[0] + 9, positions[2], 9):
+                        if i != positions[1]:
+                            if checkers_list_before[i] != None:
+                               return False
 
-        if checkers_list_before[positions[2]] is None and checkers_list_before[positions[0]] is not checkers_list_before[positions[1]] and \
-            checkers_list_after[positions[2]] is checkers_list_before[positions[0]] and checkers_list_after[positions[1]] is None and \
-            checkers_list_after[positions[0]] is None:
-            if((checkers_list_before[positions[0]] == 'RP' and checkers_list_before[positions[1]] != 'RQ') or
-                (checkers_list_before[positions[0]] == 'WP' and checkers_list_before[positions[1]] != 'WQ')):
-                return True
-            else:
-                return False
-
-        elif checkers_list_before[positions[0]] is None and checkers_list_before[positions[2]] is not checkers_list_before[positions[1]] and \
-            checkers_list_after[positions[0]] is checkers_list_before[positions[2]] and checkers_list_after[positions[1]] is None and \
-            checkers_list_after[positions[2]] is None:
-            if ((checkers_list_before[positions[2]] == 'RP' and checkers_list_before[positions[1]] != 'RQ') or
-                    (checkers_list_before[positions[2]] == 'WP' and checkers_list_before[positions[1]] != 'WQ')):
-                return True
-            else:
-                return False
-
-        return False
-
-    elif checkers_list_before[positions[0]] == 'RQ' or checkers_list_before[positions[0]] == 'WQ' or \
-        checkers_list_before[positions[2]] == 'RQ' or checkers_list_before[positions[2]] == 'WQ':
-        print('DAMA')
-
-        if checkers_list_before[positions[2]] is None and checkers_list_before[positions[0]] is not checkers_list_before[positions[1]] and \
-            checkers_list_after[positions[2]] is checkers_list_before[positions[0]] and checkers_list_after[positions[1]] is None and \
-            checkers_list_after[positions[0]] is None:
-            print('BICIE W DÓŁ')
-            if ((positions[0] - positions[2]) % 7 == 0):
-                #print(positions[0], positions[1])
-                for i in range(positions[0] + 7, positions[2], 7):
-                    if i != positions[1]:
-                        if checkers_list_before[i] != None:
-                            return False
-            elif ((positions[0] - positions[2]) % 9 == 0):
-                for i in range(positions[0] + 9, positions[2], 9):
-                    if i != positions[1]:
-                        if checkers_list_before[i] != None:
-                           return False
-
-            if((checkers_list_before[positions[0]] == 'RQ' and checkers_list_before[positions[1]] != 'RP') or
-            (checkers_list_before[positions[0]] == 'WQ' and checkers_list_before[positions[1]] != 'WP')):
-                return True
-            else:
-                return False
-        elif checkers_list_before[positions[0]] is None and checkers_list_before[positions[2]] is not checkers_list_before[positions[1]] and \
-            checkers_list_after[positions[0]] is checkers_list_before[positions[2]] and checkers_list_after[positions[1]] is None and \
-            checkers_list_after[positions[2]] is None:
-            print('BICIE W GÓRĘ')
-            if ((positions[2] - positions[0]) % 7 == 0):
-                #print(positions[0], positions[1])
-                for i in range(positions[0], positions[2], 7):
-                    if i != positions[1]:
-                        if checkers_list_before[i] != None:
-                            return False
-            elif ((positions[2] - positions[0]) % 9 == 0):
-                for i in range(positions[0], positions[2], 9):
-                    if i != positions[1]:
-                        if checkers_list_before[i] != None:
-                            return False
-            if ((checkers_list_before[positions[2]] == 'RQ' and checkers_list_before[positions[1]] != 'RP') or
-                    (checkers_list_before[positions[2]] == 'WQ' and checkers_list_before[positions[1]] != 'WP')):
-                return True
-            else:
-                return False
+                if((checkers_list_before[positions[0]] == 'RQ' and checkers_list_before[positions[1]] != 'RP') or
+                (checkers_list_before[positions[0]] == 'WQ' and checkers_list_before[positions[1]] != 'WP')):
+                    return True
+                else:
+                    return False
+            elif checkers_list_before[positions[0]] is None and checkers_list_before[positions[2]] is not checkers_list_before[positions[1]] and \
+                checkers_list_after[positions[0]] is checkers_list_before[positions[2]] and checkers_list_after[positions[1]] is None and \
+                checkers_list_after[positions[2]] is None:
+                print('BICIE W GÓRĘ')
+                if ((positions[2] - positions[0]) % 7 == 0):
+                    #print(positions[0], positions[1])
+                    for i in range(positions[0], positions[2], 7):
+                        if i != positions[1]:
+                            if checkers_list_before[i] != None:
+                                return False
+                elif ((positions[2] - positions[0]) % 9 == 0):
+                    for i in range(positions[0], positions[2], 9):
+                        if i != positions[1]:
+                            if checkers_list_before[i] != None:
+                                return False
+                if ((checkers_list_before[positions[2]] == 'RQ' and checkers_list_before[positions[1]] != 'RP') or
+                        (checkers_list_before[positions[2]] == 'WQ' and checkers_list_before[positions[1]] != 'WP')):
+                    return True
+                else:
+                    return False
     else:
         return False
 

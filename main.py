@@ -47,9 +47,15 @@ global img, dst
 
 def check_move():
     global checkers_list_correct, checkers_list_after, before_count, after_count
+    bad_move = pygame.image.load('assets/bad_move.png')
 
+    screen.blit(bad_move, (0, 0))
+    pygame.display.flip()
+    pygame.display.update()
+    pygame.mixer.music.load('assets/Error.mp3')
+    pygame.mixer.music.play(0)
     while checkers_list_correct != checkers_list_after:
-        print('ŁAJL')
+        print('WRONG MOVE')
         time.sleep(1)
         # KOMPUTER
         # ret, img = cap.read()
@@ -65,11 +71,13 @@ def check_move():
         equal_arrays1 = comparison2.all()
         checkers_list_after = board.find_checkers(dst)
 
+    pygame.mixer.music.stop()
+
 
 
 #Menu
 menu_image = pygame.image.load("assets/menu.png")
-start_game_button = pygame.image.load("assets/button.png")
+button = pygame.image.load("assets/button.png")
 settings_button = pygame.image.load("assets/button.png")
 exit_button = pygame.image.load("assets/button.png")
 
@@ -77,10 +85,20 @@ white = (255,255,255)
 highlight_color = (104, 46, 5)
 menu = True
 menu_font = pygame.font.Font("assets/GROBOLD.ttf", 20)
+small_menu_font = pygame.font.Font("assets/GROBOLD.ttf", 15)
 start_game_text = menu_font.render("Start game", True, white)
 settings_text = menu_font.render("Settings", True, white)
 quit_text = menu_font.render("Quit", True, white)
 
+#menu settings
+menu_settings = pygame.image.load("assets/settings.png")
+settings = False
+accept_button = pygame.image.load("assets/small_button.png")
+accept_text = menu_font.render("Accept", True, white)
+retutn_button = pygame.image.load("assets/return.png")
+back_text = small_menu_font.render("Back", True, white)
+
+current_ip = ""
 
 while True:
 
@@ -92,23 +110,63 @@ while True:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
-                if start_game_button.get_rect(topleft=(780, 220)).collidepoint(x, y):
+                if button.get_rect(topleft=(780, 220)).collidepoint(x, y):
                     print("start game")
                     menu = False
-                elif start_game_button.get_rect(topleft=(780, 350)).collidepoint(x, y):
+                elif button.get_rect(topleft=(780, 350)).collidepoint(x, y):
                     print("settings")
+                    textinput = pygame_textinput.TextInput(initial_string=current_ip, font_family="assets/GROBOLD.ttf",
+                                                           font_size=22,
+                                                           text_color=(255, 255, 255))
+                    settings = True
+                    while settings:
+                        events = pygame.event.get()
+                        textinput.update(events)
+                        for event in events:
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                x, y = event.pos
+                                print(x, y)
+                                if accept_button.get_rect(topleft=(880, 500)).collidepoint(x, y):
+                                    pattern = re.compile("\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d{2,5}$")
+                                    if pattern.match(textinput.get_text()):
+                                        textinput.set_text_color((0, 255, 0))
+                                        current_ip = textinput.get_text()
+                                        url = 'http://' + current_ip + '/shot.jpg'
+                                    else:
+                                        textinput.set_text_color((255, 0, 0))
+                                    print(textinput.get_text())
+                                elif retutn_button.get_rect(topleft=(1120, 550)).collidepoint(x, y):
+                                    settings = False
 
-                elif start_game_button.get_rect(topleft=(780, 480)).collidepoint(x, y):
-                    print("exit")
-                    pygame.quit()
-                    quit()
+                        x, y = pygame.mouse.get_pos()
+                        if accept_button.get_rect(topleft=(880, 500)).collidepoint(x, y):
+                            accept_text = menu_font.render("Accept", True, highlight_color)
+                        elif retutn_button.get_rect(topleft=(1120, 550)).collidepoint(x, y):
+                            back_text = small_menu_font.render("Back", True, highlight_color)
+                        else:
+                            accept_text = menu_font.render("Accept", True, white)
+                            back_text = small_menu_font.render("Back", True, white)
+
+                        screen.blit(menu_settings, (0, 0))
+                        screen.blit(textinput.get_surface(), (805, 410))
+                        screen.blit(accept_button, (880, 500))
+                        screen.blit(accept_text, (900, 520))
+                        screen.blit(retutn_button, (1120, 550))
+                        screen.blit(back_text, (1150, 558))
+                        pygame.display.flip()
+
+
+                elif button.get_rect(topleft=(780, 480)).collidepoint(x, y):
+                        print("exit")
+                        pygame.quit()
+                        quit()
 
         x, y = pygame.mouse.get_pos()
-        if start_game_button.get_rect(topleft=(780, 220)).collidepoint(x, y):
+        if button.get_rect(topleft=(780, 220)).collidepoint(x, y):
             start_game_text = menu_font.render("Start game", True, highlight_color)
-        elif start_game_button.get_rect(topleft=(780, 350)).collidepoint(x, y):
+        elif button.get_rect(topleft=(780, 350)).collidepoint(x, y):
             settings_text = menu_font.render("Settings", True, highlight_color)
-        elif start_game_button.get_rect(topleft=(780, 480)).collidepoint(x, y):
+        elif button.get_rect(topleft=(780, 480)).collidepoint(x, y):
             quit_text = menu_font.render("Quit", True, highlight_color)
         else:
             start_game_text = menu_font.render("Start game", True, white)
@@ -117,7 +175,7 @@ while True:
 
 
         screen.blit(menu_image, (0, 0))
-        screen.blit(start_game_button, (780, 220))
+        screen.blit(button, (780, 220))
         screen.blit(settings_button, (780, 350))
         screen.blit(exit_button, (780, 480))
 
@@ -126,7 +184,7 @@ while True:
         screen.blit(quit_text, (900, 520))
 
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(60)
         pygame.display.update()
 
     #telefon

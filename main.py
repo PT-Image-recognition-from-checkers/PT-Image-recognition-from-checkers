@@ -95,7 +95,7 @@ menu_settings = pygame.image.load("assets/settings.png")
 settings = False
 accept_button = pygame.image.load("assets/small_button.png")
 accept_text = menu_font.render("Accept", True, white)
-retutn_button = pygame.image.load("assets/return.png")
+return_button = pygame.image.load("assets/return.png")
 back_text = small_menu_font.render("Back", True, white)
 current_ip = ""
 
@@ -140,13 +140,13 @@ while True:
                                     else:
                                         textinput.set_text_color((255, 0, 0))
                                     print(textinput.get_text())
-                                elif retutn_button.get_rect(topleft=(1120, 550)).collidepoint(x, y):
+                                elif return_button.get_rect(topleft=(1120, 550)).collidepoint(x, y):
                                     settings = False
 
                         x, y = pygame.mouse.get_pos()
                         if accept_button.get_rect(topleft=(880, 500)).collidepoint(x, y):
                             accept_text = menu_font.render("Accept", True, highlight_color)
-                        elif retutn_button.get_rect(topleft=(1120, 550)).collidepoint(x, y):
+                        elif return_button.get_rect(topleft=(1120, 550)).collidepoint(x, y):
                             back_text = small_menu_font.render("Back", True, highlight_color)
                         else:
                             accept_text = menu_font.render("Accept", True, white)
@@ -156,7 +156,7 @@ while True:
                         screen.blit(textinput.get_surface(), (805, 410))
                         screen.blit(accept_button, (880, 500))
                         screen.blit(accept_text, (900, 520))
-                        screen.blit(retutn_button, (1120, 550))
+                        screen.blit(return_button, (1120, 550))
                         screen.blit(back_text, (1150, 558))
                         pygame.display.flip()
 
@@ -246,10 +246,10 @@ while True:
             if before_count == after_count:
                 move, _ = virtual_board.move(checkers_list_before, checkers_list_after)
                 if move:
-                   print('PRAWIDŁOWY RUCH')
-                   checkers_list_correct = checkers_list_after
-                   print(checkers_list_correct)
-                   virtual_board.gameover_check(checkers_list_correct)
+                    print('PRAWIDŁOWY RUCH')
+                    checkers_list_correct = checkers_list_after
+                    print(checkers_list_correct)
+                    winner = virtual_board.gameover_check(checkers_list_correct)
                 elif not move:
                     print('NIEPRAWIDŁOWY RUCH')
                     check_move()
@@ -259,9 +259,43 @@ while True:
             else:
                 capture = virtual_board.capture(checkers_list_before, checkers_list_after)
                 if capture:
-                   print('PRAWIDŁOWE BICIE')
-                   checkers_list_correct = checkers_list_after
-                   virtual_board.gameover_check(checkers_list_correct)
+                    print('PRAWIDŁOWE BICIE')
+                    checkers_list_correct = checkers_list_after
+                    winner = virtual_board.gameover_check(checkers_list_correct)
+
+                    if winner == 'red_win' or winner == 'white_win':
+                        if winner == 'red_win':
+                            winner_image = pygame.image.load('assets/red_win_1.png')
+                        elif winner == 'white_win':
+                            winner_image = pygame.image.load('assets/white_win_1.png')
+                        return_button_win = pygame.image.load('assets/return_1.png')
+                        screen.blit(winner_image, (0, 0))
+                        screen.blit(return_button_win, (450, 450))
+                        pygame.display.flip()
+                        pygame.display.update()
+
+                        win = True
+                        while win:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    quit()
+                                elif event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_ESCAPE:
+                                        menu = True
+                                        win = False
+                                elif event.type == pygame.MOUSEBUTTONDOWN:
+                                    x, y = event.pos
+                                    print(x, y)
+                                    if return_button_win.get_rect(topleft=(450, 450)).collidepoint(x, y):
+                                        menu = True
+                                        win = False
+                                        checkers_list_before = []
+                                        checkers_list_after = []
+                                        checkers_list_correct = []
+                                        checkers_list = []
+                                        before_count = 0
+                                        after_count = 0
                 elif not capture:
                     print('NIEPRAWIDŁOWE BICIE')
                     check_move()
@@ -278,7 +312,10 @@ while True:
     dst_RGB = pygame.transform.flip(dst_RGB, True, False)
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                menu = True
+        elif event.type == pygame.QUIT:
             pygame.quit()
             quit()
 

@@ -232,6 +232,6 @@ def check_promotion(positions, checkers_list_before, checkers_list_after):
 
 def gameover_check(checkers_list_correct):
     if 'WP' not in checkers_list_correct and 'WQ' not in checkers_list_correct:
-        print('CZERWONY WYGRAŁ')
+        return 'red_win'
     elif 'RP' not in checkers_list_correct and 'RQ' not in checkers_list_correct:
-        print('BIAŁY WYGRAŁ')
+        return 'white_win'

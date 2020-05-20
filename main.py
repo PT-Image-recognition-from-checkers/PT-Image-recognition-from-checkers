@@ -8,7 +8,7 @@ import virtual_board
 import time
 import pygame_textinput
 import re
-
+import time
 
 #telefon
 url = 'http://192.168.8.200:8080/shot.jpg'
@@ -43,7 +43,7 @@ global after_count
 before_count = 0
 after_count = 0
 global img, dst
-
+camera = False
 
 def check_move():
     global checkers_list_correct, checkers_list_after, before_count, after_count
@@ -74,12 +74,12 @@ def check_move():
     pygame.mixer.music.stop()
 
 
-
 #Menu
 menu_image = pygame.image.load("assets/menu.png")
 button = pygame.image.load("assets/button.png")
 settings_button = pygame.image.load("assets/button.png")
 exit_button = pygame.image.load("assets/button.png")
+settings_warning = pygame.image.load('assets/camera_warning.png')
 
 white = (255,255,255)
 highlight_color = (104, 46, 5)
@@ -97,11 +97,9 @@ accept_button = pygame.image.load("assets/small_button.png")
 accept_text = menu_font.render("Accept", True, white)
 retutn_button = pygame.image.load("assets/return.png")
 back_text = small_menu_font.render("Back", True, white)
-
 current_ip = ""
 
 while True:
-
     while menu:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -112,7 +110,13 @@ while True:
                 x, y = event.pos
                 if button.get_rect(topleft=(780, 220)).collidepoint(x, y):
                     print("start game")
-                    menu = False
+                    if camera:
+                        menu = False
+                    else:
+                        screen.blit(settings_warning, (0, 0))
+                        pygame.display.flip()
+                        pygame.display.update()
+                        time.sleep(2)
                 elif button.get_rect(topleft=(780, 350)).collidepoint(x, y):
                     print("settings")
                     textinput = pygame_textinput.TextInput(initial_string=current_ip, font_family="assets/GROBOLD.ttf",
@@ -132,6 +136,7 @@ while True:
                                         textinput.set_text_color((0, 255, 0))
                                         current_ip = textinput.get_text()
                                         url = 'http://' + current_ip + '/shot.jpg'
+                                        camera = True
                                     else:
                                         textinput.set_text_color((255, 0, 0))
                                     print(textinput.get_text())
@@ -155,7 +160,6 @@ while True:
                         screen.blit(back_text, (1150, 558))
                         pygame.display.flip()
 
-
                 elif button.get_rect(topleft=(780, 480)).collidepoint(x, y):
                         print("exit")
                         pygame.quit()
@@ -172,7 +176,6 @@ while True:
             start_game_text = menu_font.render("Start game", True, white)
             settings_text = menu_font.render("Settings", True, white)
             quit_text = menu_font.render("Quit", True, white)
-
 
         screen.blit(menu_image, (0, 0))
         screen.blit(button, (780, 220))

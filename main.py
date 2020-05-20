@@ -201,6 +201,9 @@ while True:
     dst, crop_rect = board.find_edges_and_perspective_transform(img)
 
     checkers_list_before = board.find_checkers(dst)
+    if len(checkers_list_after) == 0:
+        checkers_list_after = board.find_checkers(dst)
+
     if 'RP' not in checkers_list_before or 'WP' not in checkers_list_before or 'RQ' not in checkers_list_before or 'WQ' not in checkers_list_before:
         checkers_list_before = checkers_list_after
         if len(checkers_list_correct) == 0:
@@ -261,41 +264,7 @@ while True:
                 if capture:
                     print('PRAWIDŁOWE BICIE')
                     checkers_list_correct = checkers_list_after
-                    winner = virtual_board.gameover_check(checkers_list_correct)
 
-                    if winner == 'red_win' or winner == 'white_win':
-                        if winner == 'red_win':
-                            winner_image = pygame.image.load('assets/red_win_1.png')
-                        elif winner == 'white_win':
-                            winner_image = pygame.image.load('assets/white_win_1.png')
-                        return_button_win = pygame.image.load('assets/return_1.png')
-                        screen.blit(winner_image, (0, 0))
-                        screen.blit(return_button_win, (450, 450))
-                        pygame.display.flip()
-                        pygame.display.update()
-
-                        win = True
-                        while win:
-                            for event in pygame.event.get():
-                                if event.type == pygame.QUIT:
-                                    pygame.quit()
-                                    quit()
-                                elif event.type == pygame.KEYDOWN:
-                                    if event.key == pygame.K_ESCAPE:
-                                        menu = True
-                                        win = False
-                                elif event.type == pygame.MOUSEBUTTONDOWN:
-                                    x, y = event.pos
-                                    print(x, y)
-                                    if return_button_win.get_rect(topleft=(450, 450)).collidepoint(x, y):
-                                        menu = True
-                                        win = False
-                                        checkers_list_before = []
-                                        checkers_list_after = []
-                                        checkers_list_correct = []
-                                        checkers_list = []
-                                        before_count = 0
-                                        after_count = 0
                 elif not capture:
                     print('NIEPRAWIDŁOWE BICIE')
                     check_move()
@@ -343,6 +312,43 @@ while True:
                 position += 1
 
     pygame.display.update()
+
+    winner = virtual_board.gameover_check(checkers_list_correct)
+
+    if winner == 'red_win' or winner == 'white_win':
+        if winner == 'red_win':
+            winner_image = pygame.image.load('assets/red_win_1.png')
+        elif winner == 'white_win':
+            winner_image = pygame.image.load('assets/white_win_1.png')
+        return_button_win = pygame.image.load('assets/return_1.png')
+        screen.blit(winner_image, (0, 0))
+        screen.blit(return_button_win, (450, 450))
+        pygame.display.flip()
+        pygame.display.update()
+
+        win = True
+        while win:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        menu = True
+                        win = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    print(x, y)
+                    if return_button_win.get_rect(topleft=(450, 450)).collidepoint(x, y):
+                        menu = True
+                        win = False
+                        checkers_list_before = []
+                        checkers_list_after = []
+                        checkers_list_correct = []
+                        checkers_list = []
+                        before_count = 0
+                        after_count = 0
+
     #clock.tick(60)
 
     if ord('q') == cv2.waitKey(10):

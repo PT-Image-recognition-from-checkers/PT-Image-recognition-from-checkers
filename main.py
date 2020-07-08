@@ -99,6 +99,8 @@ return_button = pygame.image.load("assets/return.png")
 back_text = small_menu_font.render("Back", True, white)
 current_ip = ""
 
+textinput_font = pygame.font.Font("assets/GROBOLD.ttf", 22)
+
 while True:
     while menu:
         for event in pygame.event.get():
@@ -120,8 +122,7 @@ while True:
                 elif button.get_rect(topleft=(780, 350)).collidepoint(x, y):
                     print("settings")
                     textinput = pygame_textinput.TextInput(initial_string=current_ip, font_family="assets/GROBOLD.ttf",
-                                                           font_size=22,
-                                                           text_color=(255, 255, 255))
+                                                           font_size=22, text_color=(255, 255, 255), max_string_length=20)
                     settings = True
                     while settings:
                         events = pygame.event.get()
@@ -152,8 +153,10 @@ while True:
                             accept_text = menu_font.render("Accept", True, white)
                             back_text = small_menu_font.render("Back", True, white)
 
+                        input_text_size = textinput_font.size(textinput.get_text())
+
                         screen.blit(menu_settings, (0, 0))
-                        screen.blit(textinput.get_surface(), (805, 410))
+                        screen.blit(textinput.get_surface(), (927 - int(input_text_size[0] / 2), 410))
                         screen.blit(accept_button, (880, 500))
                         screen.blit(accept_text, (900, 520))
                         screen.blit(return_button, (1120, 550))

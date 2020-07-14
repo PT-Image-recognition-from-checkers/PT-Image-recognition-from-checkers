@@ -101,6 +101,11 @@ current_ip = ""
 
 textinput_font = pygame.font.Font("assets/GROBOLD.ttf", 22)
 
+player = 1
+multiple_capture = False
+number_of_capture = 0
+multiple_capture_pawn_position = None
+mulitple_capture_pawn = None
 while True:
     while menu:
         for event in pygame.event.get():
@@ -112,6 +117,9 @@ while True:
                 x, y = event.pos
                 if button.get_rect(topleft=(780, 220)).collidepoint(x, y):
                     print("start game")
+                    checkers_list_correct = []
+                    checkers_list_after = []
+                    checkers_list_before = []
                     if camera:
                         menu = False
                     else:
@@ -225,7 +233,7 @@ while True:
     while not equal_arrays and not equal_arrays1:
         before_count = 0
         after_count = 0
-        time.sleep(1)
+        time.sleep(0.5)
         #KOMPUTER
         #ret, img = cap.read()
         #TELEFON
@@ -248,14 +256,26 @@ while True:
 
     if len(checkers_list_after) != 0:
         if checkers_list_after != checkers_list_before and before_count != 0:
+            positions = virtual_board.get_positions(checkers_list_before, checkers_list_after)
             print(before_count, after_count)
             if before_count == after_count:
-                move, _ = virtual_board.move(checkers_list_before, checkers_list_after)
-                if move:
+                move = virtual_board.move(checkers_list_before, checkers_list_after, player)
+                promotion = virtual_board.check_promotion(positions, checkers_list_before, checkers_list_after)
+                if promotion:
+                    print("Prawidłowy awans")
+                    checkers_list_correct = checkers_list_after
+                    multiple_capture = False
+                    number_of_capture = 0
+                elif move:
                     print('PRAWIDŁOWY RUCH')
                     checkers_list_correct = checkers_list_after
                     print(checkers_list_correct)
                     winner = virtual_board.gameover_check(checkers_list_correct)
+                    player = -1 * player
+                    number_of_capture = 0
+                    multiple_capture = False
+                    mulitple_capture_pawn = None
+                    multiple_capture_pawn_position = None
                 elif not move:
                     print('NIEPRAWIDŁOWY RUCH')
                     check_move()
@@ -263,11 +283,34 @@ while True:
                 after_count = 0
 
             else:
-                capture = virtual_board.capture(checkers_list_before, checkers_list_after)
+                capture = virtual_board.capture(checkers_list_before, checkers_list_after, player, multiple_capture)
                 if capture:
-                    print('PRAWIDŁOWE BICIE')
-                    checkers_list_correct = checkers_list_after
+                    if multiple_capture and (checkers_list_before[positions[0]] == mulitple_capture_pawn or checkers_list_before[positions[2]] == mulitple_capture_pawn):
+                        if positions[0] == multiple_capture_pawn_position or positions[2] == multiple_capture_pawn_position:
+                            if checkers_list_after[positions[0]] != None:
+                                multiple_capture_pawn_position = positions[0]
+                            elif checkers_list_after[positions[2]] != None:
+                                multiple_capture_pawn_position = positions[2]
+                            print(multiple_capture_pawn_position)
+                            checkers_list_correct = checkers_list_after
 
+                        else:
+                            print('NIEPRAWIDŁOWE BICIE')
+                            check_move()
+                    else:
+                        print('PRAWIDŁOWE BICIE')
+                        if checkers_list_after[positions[0]] != None:
+                            multiple_capture_pawn_position = positions[0]
+                            mulitple_capture_pawn = checkers_list_after[positions[0]]
+                        elif checkers_list_after[positions[2]] != None:
+                            multiple_capture_pawn_position = positions[2]
+                            mulitple_capture_pawn = checkers_list_after[positions[2]]
+                        print(multiple_capture_pawn_position)
+                        checkers_list_correct = checkers_list_after
+                        multiple_capture = True
+                        # if number_of_capture == 0:
+                        player = -1 * player
+                        # number_of_capture += 1
                 elif not capture:
                     print('NIEPRAWIDŁOWE BICIE')
                     check_move()

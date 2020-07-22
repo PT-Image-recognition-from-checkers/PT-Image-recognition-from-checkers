@@ -80,6 +80,7 @@ button = pygame.image.load("assets/button.png")
 settings_button = pygame.image.load("assets/button.png")
 exit_button = pygame.image.load("assets/button.png")
 settings_warning = pygame.image.load('assets/camera_warning.png')
+settings_connection_error = pygame.image.load('assets/check_camera.png')
 
 white = (255,255,255)
 highlight_color = (104, 46, 5)
@@ -121,7 +122,16 @@ while True:
                     checkers_list_after = []
                     checkers_list_before = []
                     if camera:
-                        menu = False
+                        try:
+                            imgResp = urlopen(url)
+                            menu = False
+                            player = 1
+                        except:
+                            menu = True
+                            screen.blit(settings_connection_error, (0, 0))
+                            pygame.display.flip()
+                            pygame.display.update()
+                            time.sleep(2)
                     else:
                         screen.blit(settings_warning, (0, 0))
                         pygame.display.flip()

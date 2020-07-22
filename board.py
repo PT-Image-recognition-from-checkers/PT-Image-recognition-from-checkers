@@ -95,15 +95,23 @@ def find_checkers(image):
             #Wycinanie obszarów z masek
             area_w = mask_w[x1:x2, y1:y2]
             height_w, width_w = area_w.shape
+            if height_w == 0 or width_w == 0:
+                return None
 
             area_r = mask_r[x1:x2, y1:y2]
             height_r, width_r = area_r.shape
+            if height_r == 0 or width_r == 0:
+                return None
 
             area_y = mask_y[x1:x2, y1:y2]
             height_y, width_y = area_y.shape
+            if height_y == 0 or width_y == 0:
+                return None
 
             area_b = mask_b[x1:x2, y1:y2]
             height_b, width_b = area_b.shape
+            if height_b == 0 or width_b == 0:
+                return None
 
             # Sprawdzanie kolorów pionków
             if (cv2.countNonZero(area_w) / (height_w * width_w)) > 0.8:
